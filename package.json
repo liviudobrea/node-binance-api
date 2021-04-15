@@ -1,5 +1,5 @@
 {
-  "name": "@lidobrea/node-binance-api",
+  "name": "@liviudobrea/node-binance-api",
   "version": "0.13.0",
   "description": "Binance API for node https://github.com/jaggedsoft/node-binance-api",
   "main": "node-binance-api.js",
