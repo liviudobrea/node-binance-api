@@ -141,6 +141,21 @@ describe('All Prices', function () {
   }).timeout(TIMEOUT);
 });
 
+describe('All coins', () => {
+  it('Gets all coin info from binance', async () => {
+    try {
+      const response = await binance.allCoins();
+      debug(response);
+      assert(response !== null, WARN_SHOULD_BE_NOT_NULL);
+      assert(response);
+      assert(Array.isArray(response));
+      assert(response.length !== 0);
+    } catch (e) {
+      console.error(e);
+    }
+  });
+});
+
 describe('Balances', function () {
   it('Get the balances in the account', function (done) {
     binance.balance((error, balances) => {

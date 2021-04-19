@@ -3543,6 +3543,14 @@ let api = function Binance( options = {} ) {
         },
 
         /**
+         * get info about all coins
+         * @returns {Promise<unknown>}
+         */
+        allCoins: async function () {
+            return promiseRequest('v1/capital/config/getall', {}, { base: sapi, type: 'SIGNED' });
+        },
+
+        /**
         * Get the balance data
         * @param {function} callback - the callback function
         * @return {promise or undefined} - omitting the callback returns a promise
