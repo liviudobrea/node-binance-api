@@ -2058,6 +2058,8 @@ let api = function Binance( options = {} ) {
             if ( Binance.options.list_status_callback ) Binance.options.list_status_callback( data );
         } else if ( type === 'outboundAccountPosition' ) {
             Binance.options.balance_callback( data );
+        } else if ( type === 'balanceUpdate' ) {
+            if ( Binance.options.balance_update_callback ) Binance.options.balance_update_callback( data );
         } else {
             Binance.options.log( 'Unexpected userData: ' + type );
         }
@@ -5204,14 +5206,38 @@ let api = function Binance( options = {} ) {
 
         websockets: {
             /**
+             * Userdata websockets function with generic cb handler
+             * @param {function} callback
+             */
+            userDataStream: function userDataStream(callback) {
+                let reconnect = () => {
+                    if ( Binance.options.reconnect ) userDataStream( callback );
+                };
+                apiRequest( base + 'v3/userDataStream', {}, function ( error, response ) {
+                    Binance.options.listenKey = response.listenKey;
+                    setTimeout( function userDataKeepAlive() { // keepalive
+                        try {
+                            apiRequest( base + 'v3/userDataStream?listenKey=' + Binance.options.listenKey, {}, function ( err ) {
+                                if ( err ) setTimeout( userDataKeepAlive, 60000 ); // retry in 1 minute
+                                else setTimeout( userDataKeepAlive, 60 * 30 * 1000 ); // 30 minute keepalive
+                            }, 'PUT' );
+                        } catch ( error ) {
+                            setTimeout( userDataKeepAlive, 60000 ); // retry in 1 minute
+                        }
+                    }, 60 * 30 * 1000 ); // 30 minute keepalive
+                    subscribe( Binance.options.listenKey, callback, reconnect );
+                }, 'POST' );
+            },
+            /**
              * Userdata websockets function
              * @param {function} callback - the callback function
              * @param {function} execution_callback - optional execution callback
              * @param {function} subscribed_callback - subscription callback
              * @param {function} list_status_callback - status callback
+             * @param {function} balance_update_callback - balance update callback
              * @return {undefined}
              */
-            userData: function userData( callback, execution_callback = false, subscribed_callback = false, list_status_callback = false ) {
+            userData: function userData( callback, execution_callback = false, subscribed_callback = false, list_status_callback = false, balance_update_callback = false ) {
                 let reconnect = () => {
                     if ( Binance.options.reconnect ) userData( callback, execution_callback, subscribed_callback );
                 };
@@ -5230,6 +5256,7 @@ let api = function Binance( options = {} ) {
                     Binance.options.balance_callback = callback;
                     Binance.options.execution_callback = execution_callback;
                     Binance.options.list_status_callback = list_status_callback;
+                    Binance.options.balance_update_callback = balance_update_callback;
                     const subscription = subscribe( Binance.options.listenKey, userDataHandler, reconnect );
                     if ( subscribed_callback ) subscribed_callback( subscription.endpoint );
                 }, 'POST' );
