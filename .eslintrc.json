@@ -16,7 +16,7 @@
     ],
     "space-infix-ops": ["error", { "int32Hint": false }],
     "space-in-parens": [
-      2,
+      1,
       "always",
       {
         "exceptions": [
@@ -29,7 +29,7 @@
       "always"
     ],
     "template-curly-spacing": [
-      2,
+      1,
       "always"
     ],
     "comma-spacing": [
@@ -37,7 +37,7 @@
       { "after": true }
     ],
     "array-bracket-spacing": [
-      2,
+      1,
       "always"
     ],
     "arrow-spacing": [ "error", { "before": true, "after": true } ],
