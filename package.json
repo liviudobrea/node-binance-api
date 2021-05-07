@@ -51,6 +51,6 @@
     "nyc": "^14.1.1"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com/@liviudobrea"
+    "@liviudobrea:registry":"https://npm.pkg.github.com"
   }
 }
